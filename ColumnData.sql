@@ -1,3 +1,11 @@
+
+/* Author = Hamidreza Sadeghian
+
+ Example of Using this file ;
+   USP_CheckColumnDataTypesLength @DatabaseName='Adventureworks2022'
+
+*/
+
 Use Master
 Go
 If (select OBJECT_ID('USP_CheckColumnDataTypesLength')) is not null
