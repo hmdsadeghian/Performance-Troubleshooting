@@ -131,13 +131,12 @@ Begin
 		Print 'Calculate Max length of '+@Schema_Name+'.'+@Table_Name+'.'+@Column_Name+';';
 		set @max_Value=0;
 		Set @SQLString = 'set @maxvalue=0;
-							Select @MaxValue=max(len(['+@Column_Name+'])) , @DataLen = DATALENGTH(['+@Column_Name+'])'+
-							  +' From ['+@DatabaseName+'].['+@Schema_Name+'].['+@Table_Name+'] with(nolock)
-							  Group by ['+@Column_Name+'];'
-		SET @ParmDefinition = N'@MaxValue int OUTPUT, @DataLen int output'; 
+							Select @MaxValue=max(len(['+@Column_Name+']))'+
+							  +' From ['+@DatabaseName+'].['+@Schema_Name+'].['+@Table_Name+'] with(nolock)';
+		SET @ParmDefinition = N'@MaxValue int OUTPUT'; 
 		exec Sp_executeSQl @SqlString ,@ParmDefinition , @Maxvalue = @Max_value output , @DataLen = @Data_Len output ;
 		Update #ColumnList
-		Set Max_Length = @Max_Value  , Data_length = @Data_Len
+		Set Max_Length = @Max_Value  
 		where TABLE_NAME= @Table_Name and [Table_Schema] = @Schema_Name and [Column_Name]=@Column_Name;
 		FETCH NEXT FROM Column_cursor   
 		INTO @Schema_Name,@Table_Name,@Column_Name  
