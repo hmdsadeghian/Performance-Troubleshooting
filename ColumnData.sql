@@ -14,10 +14,11 @@ Begin
 End
 Go
 
-Create Procedure USP_CheckColumnDataTypesLength @DatabaseName Sysname as
+Create Procedure [dbo].[USP_CheckColumnDataTypesLength] @DatabaseName Sysname ,@SchemaName sysname=null,@TableName sysname=null as
 SET NOCOUNT ON;  
 Begin
-	Declare @SQLString nvarchar(max)='';
+	Declare @SQLString nvarchar(max)='',
+			@params nvarchar(max)='@Schema_Name sysname,@Table_Name sysname';
 	Drop Table if exists #columnList;
 
 	CREATE TABLE #ColumnList(
@@ -73,9 +74,12 @@ Begin
 	and ic.TABLE_NAME = it.TABLE_NAME 
 	and it.TABLE_TYPE=''base table''
 	Where 
-		ic.DATA_TYPE not in (''xml'',''HierarchyId'',''UniqueIdentifier'',''geography'',''bit'');';
+		ic.DATA_TYPE not in (''xml'',''HierarchyId'',''UniqueIdentifier'',''geography'',''bit'')
+		and (@Schema_Name is null or It.Table_Schema=@Schema_Name) 
+		and (@Table_Name is null or it.Table_Name=@Table_Name);';
 	
-	Exec(@SQLString);
+	exec sp_executesql @SQLString,@params,@Schema_Name=@SchemaName,@Table_Name=@TableName;
+	--Exec(@SQLString);
   
 	DECLARE @Table_Name nvarchar(500),
 		@Schema_Name NVarchar(500),@Column_Name nvarchar(500),
@@ -152,4 +156,3 @@ Begin
 	Order by character_maximum_length desc, max_length desc
 End
 Go
-
